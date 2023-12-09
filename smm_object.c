@@ -28,36 +28,59 @@ char* smmObj_getTypeName(int type)
 	return (char*)smmNodeName[type];
 } 
 
+typedef enum smmObjGrade
+{
+	smmObjGrade_Ap = 0,
+	smmObjGrade_A0,
+	smmObjGrade_Am,
+	smmObjGrade_Bp,
+	smmObjGrade_B0,
+	smmObjGrade_Bm,
+	smmObjGrade_Cp,
+	smmObjGrade_C0,
+	smmObjGrade_Cm
+} smmObjGrade_e;
+
 //1. 구조체 형식 정의
 typedef struct smmObject
 {
 	char name[MAX_CHARNAME];
+	smmObjType_e objType;
 	int type;
 	int credit;
 	int energy;
+	smmObjGrade_e grade;
 } smmObbjet_t;
 
 //2. 구조체 배열 변수 정의
-static smmObject_t smm_node[MAX_NODE];
+//static smmObject_t smm_node[MAX_NODE];
 
-ststic int smmObj_noNode = 0;
+//ststic int smmObj_noNode = 0;
 
 //3. 관련 함수 변경
 //object generation
-void smmObj_getNode(char* name, int type, int credit, int energy)
+void smmObj_getNode(char* name, smmObjType_e objType, int type, int credit, int energy, smmObjGrade_e grade)
 {
-	strcpy(smm_node[smmObj_noNode].name, name);
-	smm_node[smmObj_noNode].type = type;
-	smm_node[smmObj_noNode].credit = credit;
-	smm_node[smmObj_noNode].energy = energy;
+	smmObject_t* ptr;
 	
-	smmObj_noNode++;
+	ptr = (smmObject_t*)malloc(sizeof(smmObject_t));
+	
+	strcpy(ptr -> name, name);
+	ptr -> objType = objType;
+	ptr -> type = type;
+	ptr -> credit = credit;
+	ptr -> energy = energy;
+	ptr -> grade = grade;
+	
+	return ptr;
 }
 
 //3. 관련 함수 변경 
-char* smmObj_getNodeName(int node_nr)
+char* smmObj_getNodeName(void* obj)
 {
- 	return smmObj_name[node_nr];
+ 	smmObject_t* ptr = (smmObject_t*)obj;
+ 	
+	return ptr -> name;
 }
 
 int smmObj_getNodeType(int node_nr)
