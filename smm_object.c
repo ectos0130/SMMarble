@@ -28,19 +28,6 @@ char* smmObj_getTypeName(int type)
 	return (char*)smmNodeName[type];
 } 
 
-typedef enum smmObjGrade
-{
-	smmObjGrade_Ap = 0,
-	smmObjGrade_A0 = 1,
-	smmObjGrade_Am = 2,
-	smmObjGrade_Bp = 3,
-	smmObjGrade_B0 = 4,
-	smmObjGrade_Bm = 5,
-	smmObjGrade_Cp = 6,
-	smmObjGrade_C0 = 7,
-	smmObjGrade_Cm = 8
-} smmObjGrade_e;
-
 //1. 구조체 형식 정의
 typedef struct smmObject
 {
@@ -50,15 +37,15 @@ typedef struct smmObject
 	int credit;
 	int energy;
 	smmObjGrade_e grade;
-} smmObbjet_t;
+} smmObject_t;
 
 //2. 구조체 배열 변수 정의
-static smmObject_t smm_node[MAX_NODE];
-static int smmObj_noNode = 0;
+//static smmObject_t smm_node[MAX_NODE];
+//static int smmObj_noNode = 0;
 
 //3. 관련 함수 변경
 //object generation
-void smmObj_getNode(char* name, smmObjType_e objType, int type, int credit, int energy, smmObjGrade_e grade)
+void* smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, int energy, smmObjGrade_e grade)
 {
 	smmObject_t* ptr;
 	
@@ -101,4 +88,11 @@ int smmObj_getNodeEnergy(int* energy)
 	smmObject_t* ptr = (smmObject_t*)energy;
 	
 	return ptr -> energy;
+}
+
+int smmObj_getNodeGrade(int* grade)
+{
+	smmObject_t* ptr = (smmObject_t*)grade;
+	
+	return ptr -> grade;
 }

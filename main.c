@@ -174,7 +174,7 @@ void actionNode(int player)
 				int i = rolldie(player);
 				if(i >= success)
 				{
-					cur_player[player].energy -= smmObjgetNodeEnergy(boardPtr);
+					cur_player[player].energy -= smmObj_getNodeEnergy(boardPtr);
 					printf("Player %d's experiment is success.\n", smmObj_getNodeName(boardPtr));
 					cur_player[player].exe_lab = 0;
 				}
@@ -182,6 +182,7 @@ void actionNode(int player)
 				{
 					printf("Player %d's experiment is fail.\n");
 				}
+			break;
 			}
 		}
 		
@@ -213,11 +214,13 @@ void goForward(int player, int step)
 
 int isGraduated(void)
 {
-	if (cur_player[player_nr].accumCredit >= GRADUATION_CREDIT)
+	int i;
+	for (i=0;i<player_nr;i++)
 	{
-		return 1; //졸업 O 
-	};
-	return 0; //졸업 X 
+		if (cur_player[i].accumCredit >= GRADUATE_CREDIT)
+			cur_player[i].flag_graduate = 1;
+	}
+	return cur_player[i].flag_graduate = 0;
 }
 
 float calcAverageGrade(int player)
@@ -233,13 +236,6 @@ float calcAverageGrade(int player)
 	}
 	return averageGrade;
 }
-
-void* findGrade(int player, char *lectureName)
-{
-	void *gradePtr;
-	gradePtr = smmdb_getData(LISTNO_OFFSET_GRADE + player);
-}
-
 
 int main(int argc, const char * argv[]) {
     
@@ -353,7 +349,7 @@ int main(int argc, const char * argv[]) {
     
     
     //3. SM Marble game starts ---------------------------------------------------------------------------------
-    while (isGraduated() == 1) //is anybody graduated?
+    while (isGraduated() == 0) //is anybody graduated?
     {
     	int die_result;
     	
@@ -362,9 +358,11 @@ int main(int argc, const char * argv[]) {
         
         //4-2. die rolling (if not in experiment)
         die_result = rolldie(turn);
+        printf("die result : $i\n", cur_player[turn].position);
         
         //4-3. go forward
-        goForward(turn, die_result); //플레이어를 주사위 눈금만큼 이동 
+        goForward(turn, die_result); //플레이어를 주사위 눈금만큼 이동
+		printf("Player position : %i\n", cur_player[turn].position); 
 	
 		//4-4. take action at the destination node of the board
         actionNode(turn);
