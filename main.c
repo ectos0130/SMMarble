@@ -130,28 +130,23 @@ void actionNode(int player)
 	{
 		//case lecture:
 		case SMMNODE_TYPE_LECTURE:
-		{
-			if(cur_player[player].energy >= smmObj_getNodeEnergy(boardPtr))
-			{
-				printf("Player %d does not have enough energy.\n", cur_player[player].name);
-				break;
-			}
-			
-			cur_player[player].accumCredit += smmObj_getNodeCredit (boardPtr);
+			printf("Let's study! You lose Energy %i\n", smmObj_getNodeEnergy(boardPtr));
 			cur_player[player].energy -= smmObj_getNodeEnergy(boardPtr);
+			cur_player[player].accumCredit += smmObj_getNodeCredit (boardPtr);
 			
 			//grade generation
 			gradePtr = smmObj_genObject(name, smmObjType_grade, 0, smmObj_getNodeCredit( boardPtr ), 0, rand()%9);
 			smmdb_addTail(LISTNO_OFFSET_GRADE + player, gradePtr);
 			
 			break;
-		}
 		
 		//case Restaurant
 		case SMMNODE_TYPE_RESTAURANT:
 		{
-			cur_player[player].energy += smmObj_getNodeEnergy(boardPtr);
 			printf("Player %d visited restaurant and gained %d energy.\n", smmObj_getNodeName(boardPtr), smmObj_getNodeEnergy(boardPtr));
+			cur_player[player].energy += smmObj_getNodeEnergy(boardPtr);
+			cur_player[player].accumCredit += smmObj_getNodeCredit(boardPtr);
+			smmdb_addTail(LISTNO_NODE + player, boardPtr);
 			
 			break;
 		}
@@ -160,6 +155,8 @@ void actionNode(int player)
 		case SMMNODE_TYPE_HOME:
 		{
 			cur_player[player].energy += smmObj_getNodeEnergy(boardPtr);
+			cur_player[player].accumCredit += smmObj_getNodeCredit(boardPtr);
+			smmdb_addTail(LISTNO_NODE + player, boardPtr);
 			printf("Player %d is home and gains %d energy.\n", smmObj_getNodeName(boardPtr), smmObj_getNodeEnergy(boardPtr));
 			
 			break;
@@ -186,6 +183,16 @@ void actionNode(int player)
 			}
 		}
 		
+		//case Gotolab
+		case SMMNODE_TYPE_GOTOLAB:
+		{
+			cur_player[player].accumCredit += smmObj_getNodeCredit(boardPtr);
+			success = rand()%MAX_DIE+1;
+			smmdb_addTail(LISTNO_NODE + player, boardPtr);
+			
+			break;
+		}
+		
 		//case Festival
 		case SMMNODE_TYPE_FESTIVAL:
 		{
@@ -197,6 +204,18 @@ void actionNode(int player)
 			break;
 		}
 		
+		//case Foodchance
+		case SMMNODE_TYPE_FOODCHANCE:
+		{
+			cur_player[player].energy += smmObj_getNodeCredit(boardPtr);
+			cur_player[player].accumCredit += smmObj_getNodeEnergy(smmdb_getData(LISTNO_FOODCARD, rand()%food_nr));
+			smmdb_addTail(LISTNO_NODE + player, boardPtr);
+			
+			break;
+		}
+		
+		default:
+			break;
 	}
 }
 	
