@@ -29,9 +29,10 @@ typedef struct player
 	char name[MAX_CHARNAME];
 	int accumCredit;
 	int flag_graduate;
+	int exe_lab;
 }player_t;
 
-static player_t *cur_player[MAX_PLAYER];
+static player_t *cur_player;
 //static player_t cur_player[MAX_PLAYER];
 
 
@@ -123,6 +124,7 @@ void actionNode(int player)
 	int type = smmObj_getNodeType( boardPtr );
 	char *name = smmObj_getNodeName( boardPtr );
 	void *gradePtr;
+	int success = 0;
 	
 	switch(type)
 	{
@@ -166,15 +168,21 @@ void actionNode(int player)
 		//case Laboratory
 		case SMMNODE_TYPE_LABORATORY:
 		{
-			printf("Player %d has arrived at an experiment node and is moving to the laboratory.\n", smmObj_getNodeName(boardPtr));
-			cur_player[player].isInExperiment = true; 
-			cur_player[player].experimentSuccesValue = rand() % MAX_DIE + 1;
-			
-			cur_player[player].position = LABORATORY_NODE_INDEX;
-			
-			printf("Player %d needs to roll a %d or higher to succeed in the experiment.\n", smmObj_getNodeName(boardPtr), cur_player[player].experimentSuccesValue);
-			 
-			break;
+			cur_player[player].accumCredit += smmObj_getNodeCredit(boardPtr);
+			if (cur_player[player].exe_lab == 1)
+			{
+				int i = rolldie(player);
+				if(i >= success)
+				{
+					cur_player[player].energy -= smmObjgetNodeEnergy(boardPtr);
+					printf("Player %d's experiment is success.\n", smmObj_getNodeName(boardPtr));
+					cur_player[player].exe_lab = 0;
+				}
+				else
+				{
+					printf("Player %d's experiment is fail.\n");
+				}
+			}
 		}
 		
 		//case Festival

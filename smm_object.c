@@ -42,7 +42,7 @@ typedef enum smmObjGrade
 } smmObjGrade_e;
 
 //1. 구조체 형식 정의
-typedef struct smmObj
+typedef struct smmObject
 {
 	char name[MAX_CHARNAME];
 	smmObjType_e objType;
